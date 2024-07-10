@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:weather/services/network.dart';
-import '../services/location.dart';
+import 'package:weather/services/weather.dart';
 import 'location.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -15,49 +14,37 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
+    print('all time');
     getLocation();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Center(
-        child: SizedBox(
-          width: 200.0,
-          height: 100.0,
-          child: Shimmer.fromColors(
-            baseColor: Colors.grey,
-            highlightColor: Colors.grey,
-            child: Image.network(
-              'https://docs.flutter.dev/cookbook'
-              '/img-files/effects/split-check/Avatar1.jpg',
+        child: Container(
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/logos/logo-no-background.png'),
               fit: BoxFit.cover,
             ),
           ),
+          width: 200,
+          height: 200,
         ),
       ),
     );
   }
 
   void getLocation() async {
-    Location location = Location();
-    await location.getCurrentLocation();
-
-    latitude = location.latitude.toString();
-    longitude = location.longitude.toString();
-    Network network = Network(
-      baseUrl: 'api.openweathermap.org',
-      queryParams: {
-        'lat': latitude,
-        'lon': longitude,
-        'appid': 'e6a408a269f71f41295ca971a9ec2323',
-      },
-    );
-    var weatherData = await network.getData();
+    WeatherModel weather = WeatherModel();
+    var data = await weather.getLocationWeather();
+    await Future.delayed(const Duration(seconds: 2));
 
     if (context.mounted) {
       Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return LocationScreen();
+        return LocationScreen(weatherData: data);
       }));
     }
   }

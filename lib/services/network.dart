@@ -7,7 +7,7 @@ class Network {
 
   Network({required this.baseUrl, this.queryParams});
 
-  Future<void> getData() async {
+  Future getData() async {
     Uri url = Uri.https(baseUrl, '/data/2.5/weather', queryParams);
     var response = await client.get(url);
     if (response.statusCode == 200) {
